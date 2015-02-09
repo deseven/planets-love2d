@@ -1,0 +1,8 @@
+build/*
+!build/.gitkeep
+distr/osx/*
+!distr/osx/.gitkeep
+distr/win32/*
+!distr/win32/.gitkeep
+distr/win64/*
+!distr/win64/.gitkeep
