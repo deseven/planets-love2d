@@ -11,33 +11,35 @@ function love.load()
 	desktopW,desktopH = love.window.getDesktopDimensions(1)
 	love.window.setMode(desktopW,desktopH,{fullscreen=true,fullscreentype="desktop",vsync=true,fsaa=4,display=1})
 	love.window.setTitle("planets!!")
+	mainFont = love.graphics.newFont("fonts/xol.ttf",16)
 	numStars = desktopW/5
 	scale = 0.5
 
 	local loadPieces = numPlanets + 5
 
-	updateLoading(1,loadPieces)
-
+	updateLoading(1,loadPieces,"creating background...")
 	bg = createBG(desktopW,desktopH)
 
-	updateLoading(2,loadPieces)
-
+	updateLoading(2,loadPieces,"creating stars...")
 	for i = 0,numStars do
 		stars[i] = createStar(0)
 	end
-	updateLoading(3,loadPieces)
+
+	updateLoading(3,loadPieces,"creating planets...")
 	for i = 0,numPlanets do
 		planets[i] = createPlanet(i,math.random(8))
-		updateLoading(3+i,loadPieces)
+		updateLoading(3+i,loadPieces,"creating planet "..tostring(i).."...")
 	end
-	sol = createSol(0)
-	updateLoading(loadPieces-1,loadPieces)
 
+	updateLoading(3+numPlanets,loadPieces,"creating sol...")
+	sol = createSol(0)
+
+	updateLoading(loadPieces-1,loadPieces,"compiling shaders...")
 	planetShader = love.graphics.newShader("shaders/planet.glsl")
 	solShader = love.graphics.newShader("shaders/sol2.glsl")
 	solShader:send('fcolorType',math.random(4))
 	shadersOn = true
-	updateLoading(loadPieces,loadPieces)	
+	updateLoading(loadPieces,loadPieces,"launching simulation...")	
 end
 
 function love.update( dt )

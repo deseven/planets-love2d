@@ -19,8 +19,9 @@ function divideColor(r,g,b,d)
 	return r,g,b
 end
 
-function updateLoading(current,max)
+function updateLoading(current,max,msg)
 	local piece = 792/max
+	love.graphics.setFont(mainFont)
 	love.graphics.clear()
 	love.graphics.setColor(255,255,255)
 	love.graphics.rectangle("line",desktopW/2-400-0.5,desktopH/2-20-0.5,800,40)
@@ -29,6 +30,7 @@ function updateLoading(current,max)
 	else
 		love.graphics.rectangle("fill",desktopW/2-396-0.5,desktopH/2-16-0.5,792,32)
 	end
+	love.graphics.printf(msg,0,desktopH/2+50,desktopW,"center")
 	love.graphics.present()
 end
 
