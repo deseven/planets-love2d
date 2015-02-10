@@ -13,6 +13,8 @@ function love.load()
 	love.window.setTitle("planets!!")
 	scale = 0.5
 
+	bg = createBG(desktopW,desktopH)
+
 	numStars = desktopW/5
 	for i = 0,numStars do
 		stars[i] = createStar(0)
@@ -54,6 +56,7 @@ function love.draw()
 		love.graphics.point(stars[i].x,stars[i].y)
 	end
 	love.graphics.setColor(255,255,255)
+	love.graphics.draw(bg,0,0,0,4,4)
 	if shadersOn then love.graphics.setShader(solShader) end
 	solShader:send('exttime',sol.xrot)
 	love.graphics.draw(sol.texture,desktopW/2,desktopH/2,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)

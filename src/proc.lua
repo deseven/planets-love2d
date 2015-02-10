@@ -19,14 +19,14 @@ function divideColor(r,g,b,d)
 	return r,g,b
 end
 
-function genTexture(d,a1,b1,a2,b2,r,g,b,ctype)
+function genTexture(w,h,a1,b1,a2,b2,r,g,b,ctype)
 	local o = love.math.random(20000)
 	local pi = math.pi
-	local data = love.image.newImageData(d,d)
-	for x=0,d-1 do
-		for y=0,d-1 do
-			local s=x/d
-			local t=y/d
+	local data = love.image.newImageData(w,h)
+	for x=0,w-1 do
+		for y=0,h-1 do
+			local s=x/w
+			local t=y/h
 			local dx=a2-a1
 			local dy=b2-b1
 			local nx=a1+math.cos(s*2*pi)*dx/(2*pi)
@@ -40,7 +40,7 @@ function genTexture(d,a1,b1,a2,b2,r,g,b,ctype)
         	elseif ctype == 3 then
         		if c < 100 then c = 50 end
         		data:setPixel(x, y, c, c, c, 255)
-        	end
+        	elseif ctype == 4 then data:setPixel(x, y, c, c, c, 20) end
 		end
 	end
 	return love.graphics.newImage(data)
@@ -52,7 +52,7 @@ function createSol(type)
 		type = type,
 		name = "",
 		size = curSize,
-		texture = genTexture(curSize,0,0,10,10,255,100,0,3),
+		texture = genTexture(curSize,curSize,0,0,10,10,0,0,0,3),
 		xrot = 0,
 		yrot = 0,
 		xrotspd = 0.8,
@@ -72,6 +72,10 @@ function createStar(type)
 	}
 end
 
+function createBG(w,h)
+	return genTexture(w/4,h/4,-1,3,-10,10,0,0,0,4)
+end
+
 function createPlanet(index,type)
 	local curSize = math.random(100)+50
 	local curDist,curVel
@@ -86,7 +90,7 @@ function createPlanet(index,type)
 		type = type,
 		name = "",
 		size = curSize,
-		texture = genTexture(curSize,math.random(10),math.random(10),math.random(20)+10,math.random(20)+10,math.random(200)+55,math.random(200)+55,math.random(200)+55,math.random(2)),
+		texture = genTexture(curSize,curSize,math.random(10),math.random(10),math.random(20)+10,math.random(20)+10,math.random(200)+55,math.random(200)+55,math.random(200)+55,math.random(2)),
 		x = 0,
 		y = 0,
 		xrot = 0,
