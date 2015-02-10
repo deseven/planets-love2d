@@ -27,7 +27,9 @@ touch build/.gitkeep
 
 # building
 echo -n "building .love: "
-zip -0 -X -j -q build/planets.love src/conf.lua src/main.lua src/proc.lua
+cd src
+zip -0 -r -X -q ../build/planets.love .
+cd ..
 echo "done"
 
 if [ $buildOSX = "y" ]; then

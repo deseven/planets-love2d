@@ -13,8 +13,10 @@ function love.load()
 	for i = 0,numPlanets do
 		planets[i] = createPlanet(i,math.random(8))
 	end
-	planetShader = planetShader()
-	shaderOn = true
+	planetShader = love.graphics.newShader("shaders/planet.glsl")
+	solShader = love.graphics.newShader("shaders/sol2.glsl")
+	solShader:send('fcolorType',math.random(0,4))
+	shadersOn = true
 end
 
 function love.update( dt )
@@ -30,9 +32,9 @@ function love.update( dt )
 	for i = 0,numPlanets do
 		planets[i].path = planets[i].path + planets[i].velocity + dt/1000
 		x = planets[i].distance*math.cos(planets[i].path)*scale
-		planets[i].x = x+desktopW/2-planets[i].size/2*scale
+		planets[i].x = x+desktopW/2
 		y = planets[i].distance*math.sin(planets[i].path)*scale
-		planets[i].y = y+desktopH/2-planets[i].size/2*scale
+		planets[i].y = y+desktopH/2
 		planets[i].xrot = planets[i].xrot + dt * planets[i].xrotspd
 		planets[i].yrot = planets[i].yrot + dt * planets[i].yrotspd
 	end
@@ -42,10 +44,17 @@ end
 
 function love.draw()
 	love.graphics.setColor( 255, 255, 255 )
-	if shaderOn then love.graphics.setShader(planetShader) end
-	planetShader:send('xrot',sol.xrot)
-	planetShader:send('yrot',sol.yrot)
+	if shadersOn then love.graphics.setShader(solShader) end
+	--planetShader:send('xrot',sol.xrot)
+	--planetShader:send('yrot',sol.yrot)
+	solShader:send('exttime',sol.xrot)
+	--solShader:send('freq1',math.random(1,4)/100)
+	--solShader:send('freq2',math.random(1,4)/100)
+	--solShader:send('freq1',1)
+	--solShader:send('freq2',1)
 	love.graphics.draw(sol.texture,desktopW/2,desktopH/2,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)
+	--love.graphics.setShader()
+	if shadersOn then love.graphics.setShader(planetShader) end
 	for i = 0,numPlanets do
 		planetShader:send('xrot',planets[i].xrot)
 		planetShader:send('yrot',planets[i].yrot)
@@ -56,7 +65,12 @@ function love.draw()
 end
 
 function love.keypressed( key )
-	if key == 's' then shaderOn	= not shaderOn end
+	if key == 's' then shadersOn = not shadersOn end
+	if key == '1' then solShader:send('fcolorType',0) end
+	if key == '2' then solShader:send('fcolorType',1) end
+	if key == '3' then solShader:send('fcolorType',2) end
+	if key == '4' then solShader:send('fcolorType',3) end
+	if key == '5' then solShader:send('fcolorType',4) end
 	--if key == ' '	then sh.image = love.graphics.newImage(genTexture(0)) 	end
 	if key == 'escape'	then love.event.quit() 	end
 end

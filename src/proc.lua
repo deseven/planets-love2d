@@ -1,26 +1,3 @@
-function planetShader()
-	return love.graphics.newShader [[
-		const number pi = 3.14159265;
-		const number pi2 = 2.0 * pi;
-		extern number xrot;
-		extern number yrot;
-		extern number resolution = 2;
-		extern number width = 1;
-		extern number height = 1;
-		vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pixel_coords) {
-			vec2 p = 2.0 * (tc - 0.5);							// center on canvas
-			number r = sqrt(p.x*width*p.x + p.y*height*p.y);		// sphere size
-			if (r > 1.0) discard;
-			number d = r != 0.0 ? asin(r) / r : 0.0;
-			vec2 p2 = d * p * resolution;
-			number x3 = mod(p2.x / pi2 + 0.5 + xrot, 1.0);
-			number y3 = mod(p2.y / pi2 + 0.5 + yrot, 1.0);
-			vec2 newCoord = vec2(x3, y3);						// location of texture on sphere
-			vec4 sphereColor = color * Texel(texture, newCoord);
-			return sphereColor;
-		}
-	]]
-end
 
 function genTexture(d,a1,b1,a2,b2,r,g,b,ctype)
 	local o = love.math.random(20000)
@@ -40,6 +17,9 @@ function genTexture(d,a1,b1,a2,b2,r,g,b,ctype)
         	if ctype == 0 then data:setPixel(x, y, r, g, c, 255)
         	elseif ctype == 1 then data:setPixel(x, y, c, g, b, 255)
         	elseif ctype == 2 then data:setPixel(x, y, r, c, b, 255)
+        	elseif ctype == 3 then
+        		if c < 100 then c = 50 end
+        		data:setPixel(x, y, c, c, c, 255)
         	end
 		end
 	end
@@ -47,16 +27,16 @@ function genTexture(d,a1,b1,a2,b2,r,g,b,ctype)
 end
 
 function createSol(type)
-	curSize = 500
+	curSize = 1000
 	return {
 		type = type,
 		name = "",
 		size = curSize,
-		texture = genTexture(curSize,0,0,1,1,100,100,100,0),
+		texture = genTexture(curSize,0,0,10,10,255,100,0,3),
 		xrot = 0,
 		yrot = 0,
-		xrotspd = math.random()/5,
-		yrotspd = math.random()/5
+		xrotspd = 0.8,
+		yrotspd = math.random()
 	}
 end
 
