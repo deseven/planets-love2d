@@ -19,6 +19,19 @@ function divideColor(r,g,b,d)
 	return r,g,b
 end
 
+function updateLoading(current,max)
+	local piece = 792/max
+	love.graphics.clear()
+	love.graphics.setColor(255,255,255)
+	love.graphics.rectangle("line",desktopW/2-400-0.5,desktopH/2-20-0.5,800,40)
+	if current ~= max then
+		love.graphics.rectangle("fill",desktopW/2-396-0.5,desktopH/2-16-0.5,current*piece,32)
+	else
+		love.graphics.rectangle("fill",desktopW/2-396-0.5,desktopH/2-16-0.5,792,32)
+	end
+	love.graphics.present()
+end
+
 function genTexture(w,h,a1,b1,a2,b2,r,g,b,ctype)
 	local o = love.math.random(20000)
 	local pi = math.pi
@@ -47,7 +60,7 @@ function genTexture(w,h,a1,b1,a2,b2,r,g,b,ctype)
 end
 
 function createSol(type)
-	local curSize = 1000
+	local curSize = 1500
 	return {
 		type = type,
 		name = "",
@@ -80,7 +93,7 @@ function createPlanet(index,type)
 	local curSize = math.random(100)+50
 	local curDist,curVel
 	if index == 0 then
-			curDist = 340+math.random(20)+curSize
+			curDist = 540+math.random(20)+curSize
 			curVel = 0.005+math.random(6)/1000+math.random(10)/10000
 		else
 			curDist = planets[index-1].distance+planets[index-1].size*math.random(2,3)+curSize+math.random(100)

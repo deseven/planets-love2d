@@ -11,23 +11,33 @@ function love.load()
 	desktopW,desktopH = love.window.getDesktopDimensions(1)
 	love.window.setMode(desktopW,desktopH,{fullscreen=true,fullscreentype="desktop",vsync=true,fsaa=4,display=1})
 	love.window.setTitle("planets!!")
+	numStars = desktopW/5
 	scale = 0.5
+
+	local loadPieces = numPlanets + 5
+
+	updateLoading(1,loadPieces)
 
 	bg = createBG(desktopW,desktopH)
 
-	numStars = desktopW/5
+	updateLoading(2,loadPieces)
+
 	for i = 0,numStars do
 		stars[i] = createStar(0)
 	end
+	updateLoading(3,loadPieces)
 	for i = 0,numPlanets do
 		planets[i] = createPlanet(i,math.random(8))
+		updateLoading(3+i,loadPieces)
 	end
 	sol = createSol(0)
+	updateLoading(loadPieces-1,loadPieces)
 
 	planetShader = love.graphics.newShader("shaders/planet.glsl")
 	solShader = love.graphics.newShader("shaders/sol2.glsl")
 	solShader:send('fcolorType',math.random(4))
 	shadersOn = true
+	updateLoading(loadPieces,loadPieces)	
 end
 
 function love.update( dt )
