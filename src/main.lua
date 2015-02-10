@@ -7,6 +7,7 @@ local sol
 require "proc"
 
 function love.load()
+	math.randomseed(os.time())
 	desktopW,desktopH = love.window.getDesktopDimensions(1)
 	love.window.setMode(desktopW,desktopH,{fullscreen=true,fullscreentype="desktop",vsync=true,fsaa=4,display=1})
 	love.window.setTitle("planets!!")
@@ -23,20 +24,18 @@ function love.load()
 
 	planetShader = love.graphics.newShader("shaders/planet.glsl")
 	solShader = love.graphics.newShader("shaders/sol2.glsl")
-	solShader:send('fcolorType',math.random(0,4))
+	solShader:send('fcolorType',math.random(4))
 	shadersOn = true
 end
 
 function love.update( dt )
-	--sh.time  = sh.time + dt * sh.speed
-	--sh.xtime = -sh.time
-	--sh.ytime = -sh.time
-	--if love.keyboard.isDown( 'up')		then sh.y = sh.y + 1 end
-	--if love.keyboard.isDown( 'down' )	then sh.y = sh.y - 1 end
-	--if love.keyboard.isDown( 'right' )	then sh.x = sh.x - 1 end
-	--if love.keyboard.isDown( 'left') 	then sh.x = sh.x + 1 end
-	--if love.keyboard.isDown( 'z' ) then sh.size = sh.size - dt end
-	--if love.keyboard.isDown( 'a' ) then sh.size = sh.size + dt end
+	for i = 0,numStars do
+		if math.random(1000) == 1000 then
+			stars[i].r,stars[i].g,stars[i].b = multiplyColor(stars[i].r,stars[i].g,stars[i].b,1.5)
+		elseif math.random(1000) == 1000 then
+			stars[i].r,stars[i].g,stars[i].b = divideColor(stars[i].r,stars[i].g,stars[i].b,1.5)
+		end
+	end
 	for i = 0,numPlanets do
 		planets[i].path = planets[i].path + planets[i].velocity + dt/1000
 		x = planets[i].distance*math.cos(planets[i].path)*scale
@@ -47,24 +46,17 @@ function love.update( dt )
 		planets[i].yrot = planets[i].yrot + dt * planets[i].yrotspd
 	end
 	sol.xrot = sol.xrot + dt * sol.xrotspd
-	sol.yrot = sol.yrot + dt * sol.yrotspd
 end
 
 function love.draw()
-	love.graphics.setColor( 255, 255, 255 )
-	if shadersOn then love.graphics.setShader(solShader) end
-	--planetShader:send('xrot',sol.xrot)
-	--planetShader:send('yrot',sol.yrot)
-	solShader:send('exttime',sol.xrot)
-	--solShader:send('freq1',math.random(1,4)/100)
-	--solShader:send('freq2',math.random(1,4)/100)
-	--solShader:send('freq1',1)
-	--solShader:send('freq2',1)
-	love.graphics.draw(sol.texture,desktopW/2,desktopH/2,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)
-	love.graphics.setShader()
 	for i = 0,numStars do
+		love.graphics.setColor(stars[i].r,stars[i].g,stars[i].b)
 		love.graphics.point(stars[i].x,stars[i].y)
 	end
+	love.graphics.setColor(255,255,255)
+	if shadersOn then love.graphics.setShader(solShader) end
+	solShader:send('exttime',sol.xrot)
+	love.graphics.draw(sol.texture,desktopW/2,desktopH/2,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)
 	if shadersOn then love.graphics.setShader(planetShader) end
 	for i = 0,numPlanets do
 		planetShader:send('xrot',planets[i].xrot)

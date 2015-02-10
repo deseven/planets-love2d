@@ -1,8 +1,28 @@
 
+function multiplyColor(r,g,b,m)
+	local r = r*m
+	local g = g*m
+	local b = b*m
+	if r > 255 then r = 255 end
+	if g > 255 then g = 255 end
+	if b > 255 then b = 255 end
+	return r,g,b
+end
+
+function divideColor(r,g,b,d)
+	local r = r/d
+	local g = g/d
+	local b = b/d
+	if r < 100 then r = 100 end
+	if g < 100 then g = 100 end
+	if b < 100 then b = 100 end
+	return r,g,b
+end
+
 function genTexture(d,a1,b1,a2,b2,r,g,b,ctype)
 	local o = love.math.random(20000)
 	local pi = math.pi
-	data = love.image.newImageData(d,d)
+	local data = love.image.newImageData(d,d)
 	for x=0,d-1 do
 		for y=0,d-1 do
 			local s=x/d
@@ -27,7 +47,7 @@ function genTexture(d,a1,b1,a2,b2,r,g,b,ctype)
 end
 
 function createSol(type)
-	curSize = 1000
+	local curSize = 1000
 	return {
 		type = type,
 		name = "",
@@ -41,8 +61,12 @@ function createSol(type)
 end
 
 function createStar(type)
+	local color = math.random(155)+100
 	return {
 		type = type,
+		r = color,
+		g = color,
+		b = color,
 		x = math.random(0,desktopW),
 		y = math.random(0,desktopH)
 	}
