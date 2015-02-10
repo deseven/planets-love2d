@@ -1,6 +1,7 @@
 // based on https://www.shadertoy.com/view/4dXGR4#
 
 extern float exttime;
+extern float rottime;
 extern float fcolorType = 0;
 
 // by trisomie21
@@ -92,15 +93,16 @@ vec4 effect( vec4 incolor, Image texture, vec2 texture_coords, vec2 screen_coord
 		vec2 newUv;
 		newUv.x = sp.x*f;
 		newUv.y = sp.y*f;
-		newUv += vec2( time, 0.0 );
+		newUv += vec2( rottime, 0.0 );
 		if (newUv.y < 0.) {newUv.y += 1.;}
 		if (newUv.x < 0.) {newUv.x += 1.;}
 		if (newUv.x > 1.) {newUv.x -= floor(newUv.x);}
 
 		vec3 texSample 	= texture2D( texture, newUv ).rgb;
-		float uOff		= ( texSample.r * brightness * 4.5 + time );
+		float uOff		= ( texSample.r * brightness * 4.5 + rottime );
 		vec2 starUV		= newUv + vec2( uOff, 0.0 );
 		if (starUV.y < 0.) {starUV.y += 1.;}
+		if (starUV.y > 1.) {starUV.y -= floor(starUV.y);}
 		if (starUV.x < 0.) {starUV.x += 1.;}
 		if (starUV.x > 1.) {starUV.x -= floor(starUV.x);}
 		starSphere		= texture2D( texture, starUV ).rgb;

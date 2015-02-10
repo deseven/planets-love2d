@@ -60,6 +60,7 @@ function love.update( dt )
 		planets[i].yrot = planets[i].yrot + dt * planets[i].yrotspd
 	end
 	sol.xrot = sol.xrot + dt * sol.xrotspd
+	sol.yrot = sol.yrot + (dt * sol.yrotspd)/10
 end
 
 function love.draw()
@@ -71,6 +72,7 @@ function love.draw()
 	love.graphics.draw(bg,0,0,0,4,4)
 	if shadersOn then love.graphics.setShader(solShader) end
 	solShader:send('exttime',sol.xrot)
+	solShader:send('rottime',sol.yrot)
 	love.graphics.draw(sol.texture,desktopW/2,desktopH/2,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)
 	if shadersOn then love.graphics.setShader(planetShader) end
 	for i = 0,numPlanets do

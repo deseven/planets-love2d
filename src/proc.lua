@@ -45,17 +45,16 @@ function genTexture(w,h,a1,b1,a2,b2,r,g,b,ctype)
 			local dx=a2-a1
 			local dy=b2-b1
 			local nx=a1+math.cos(s*2*pi)*dx/(2*pi)
-        	local ny=b1+math.cos(t*2*pi)*dy/(2*pi)
-        	local nz=a1+math.sin(s*2*pi)*dx/(2*pi)
-        	local nw=b1+math.sin(t*2*pi)*dy/(2*pi)
-        	c = love.math.noise(nx+o,ny+o,nz+o,nw+o)*255
-        	if ctype == 0 then data:setPixel(x, y, r, g, c, 255)
-        	elseif ctype == 1 then data:setPixel(x, y, c, g, b, 255)
-        	elseif ctype == 2 then data:setPixel(x, y, r, c, b, 255)
-        	elseif ctype == 3 then
-        		if c < 100 then c = 50 end
-        		data:setPixel(x, y, c, c, c, 255)
-        	elseif ctype == 4 then data:setPixel(x, y, c, c, c, 20) end
+			local ny=b1+math.cos(t*2*pi)*dy/(2*pi)
+			local nz=a1+math.sin(s*2*pi)*dx/(2*pi)
+			local nw=b1+math.sin(t*2*pi)*dy/(2*pi)
+			c = love.math.noise(nx+o,ny+o,nz+o,nw+o)*255
+			if ctype == 0 then data:setPixel(x, y, r, g, c, 255)
+			elseif ctype == 1 then data:setPixel(x, y, c, g, b, 255)
+			elseif ctype == 2 then data:setPixel(x, y, r, c, b, 255)
+			elseif ctype == 3 then 
+				data:setPixel(x, y, c, c, c, 255)
+			elseif ctype == 4 then data:setPixel(x, y, c, c, c, 20) end
 		end
 	end
 	return love.graphics.newImage(data)
@@ -67,11 +66,11 @@ function createSol(type)
 		type = type,
 		name = "",
 		size = curSize,
-		texture = genTexture(curSize,curSize,0,0,10,10,0,0,0,3),
+		texture = genTexture(curSize,curSize,5,5,10,20,0,0,0,3),
 		xrot = 0,
 		yrot = 0,
 		xrotspd = 0.8,
-		yrotspd = math.random()
+		yrotspd = 0.3
 	}
 end
 
