@@ -3,10 +3,10 @@
 extern float exttime;
 extern float fcolorType = 0;
 
-float snoise(vec3 uv, float res)	// by trisomie21
-{
+// by trisomie21
+float snoise(vec3 uv, float res) {
 	const vec3 s = vec3(1e0, 1e2, 1e4);
-	
+
 	uv *= res;
 	
 	vec3 uv0 = floor(mod(uv, res))*s;
@@ -14,8 +14,7 @@ float snoise(vec3 uv, float res)	// by trisomie21
 	
 	vec3 f = fract(uv); f = f*f*(3.0-2.0*f);
 	
-	vec4 v = vec4(uv0.x+uv0.y+uv0.z, uv1.x+uv0.y+uv0.z,
-		      	  uv0.x+uv1.y+uv0.z, uv1.x+uv1.y+uv0.z);
+	vec4 v = vec4(uv0.x+uv0.y+uv0.z, uv1.x+uv0.y+uv0.z,uv0.x+uv1.y+uv0.z, uv1.x+uv1.y+uv0.z);
 	
 	vec4 r = fract(sin(v*1e-3)*1e5);
 	float r0 = mix(mix(r.x, r.y, f.x), mix(r.z, r.w, f.x), f.y);
@@ -56,7 +55,6 @@ vec4 effect( vec4 incolor, Image texture, vec2 texture_coords, vec2 screen_coord
 	}
 
 	float time		= exttime * 0.1;
-	//vec2 uv			= gl_FragCoord.xy / iResolution.xy;
 	vec2 uv			= 1.0 * texture_coords;
 	vec2 p 			= -0.5 + uv;
 
@@ -69,7 +67,8 @@ vec4 effect( vec4 incolor, Image texture, vec2 texture_coords, vec2 screen_coord
 	vec3 coord		= vec3( angle, dist, time * 0.1 );
 	
 	float newTime1	= abs( snoise( coord + vec3( 0.0, -time * ( 0.35 + brightness * 0.001 ), time * 0.015 ), 15.0 ) );
-	float newTime2	= abs( snoise( coord + vec3( 0.0, -time * ( 0.15 + brightness * 0.001 ), time * 0.015 ), 45.0 ) );	
+	float newTime2	= abs( snoise( coord + vec3( 0.0, -time * ( 0.15 + brightness * 0.001 ), time * 0.015 ), 45.0 ) );
+
 	for( int i=1; i<=7; i++ ){
 		float power = pow( 2.0, float(i + 1) );
 		fVal1 += ( 0.5 / power ) * snoise( coord + vec3( 0.0, -time, time * 0.2 ), ( power * ( 10.0 ) * ( newTime1 + 1.0 ) ) );
@@ -86,25 +85,24 @@ vec4 effect( vec4 incolor, Image texture, vec2 texture_coords, vec2 screen_coord
 	
 	vec2 sp = -1.0 + 2.0 * uv;
 	sp *= ( 2.0 - brightness );
-  	//vec2 sp = -0.5 + uv;
-  	float r = dot(sp,sp);
+	float r = dot(sp,sp);
 	float f = (1.0-sqrt(abs(1.0-r)))/(r) + brightness * 0.5;
 	if( dist < radius ){
 		corona			*= pow( dist * invRadius, 12.0 );
-  		vec2 newUv;
- 		newUv.x = sp.x*f;
-  		newUv.y = sp.y*f;
+		vec2 newUv;
+		newUv.x = sp.x*f;
+		newUv.y = sp.y*f;
 		newUv += vec2( time, 0.0 );
 		if (newUv.y < 0.) {newUv.y += 1.;}
-  		if (newUv.x < 0.) {newUv.x += 1.;}
-  		if (newUv.x > 1.) {newUv.x -= floor(newUv.x);}
+		if (newUv.x < 0.) {newUv.x += 1.;}
+		if (newUv.x > 1.) {newUv.x -= floor(newUv.x);}
 
 		vec3 texSample 	= texture2D( texture, newUv ).rgb;
 		float uOff		= ( texSample.r * brightness * 4.5 + time );
 		vec2 starUV		= newUv + vec2( uOff, 0.0 );
 		if (starUV.y < 0.) {starUV.y += 1.;}
-  		if (starUV.x < 0.) {starUV.x += 1.;}
-  		if (starUV.x > 1.) {starUV.x -= floor(starUV.x);}
+		if (starUV.x < 0.) {starUV.x += 1.;}
+		if (starUV.x > 1.) {starUV.x -= floor(starUV.x);}
 		starSphere		= texture2D( texture, starUV ).rgb;
 	}
 	
@@ -113,6 +111,8 @@ vec4 effect( vec4 incolor, Image texture, vec2 texture_coords, vec2 screen_coord
 	if (outcolor.r > 1.) {outcolor.r = 1.0;}
 	if (outcolor.g > 1.) {outcolor.g = 1.0;}
 	if (outcolor.b > 1.) {outcolor.b = 1.0;}
+
+	// adding alpha
 	float alpha = outcolor.r;
 	if (outcolor.g > alpha) {alpha = outcolor.g;}
 	if (outcolor.b > alpha) {alpha = outcolor.b;}
@@ -120,7 +120,6 @@ vec4 effect( vec4 incolor, Image texture, vec2 texture_coords, vec2 screen_coord
 	outcolor.g *= delta;
 	outcolor.b *= delta;
 	outcolor.r *= delta;
-	//return outcolor;
+
 	return vec4(outcolor,alpha);
 }
-

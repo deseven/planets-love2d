@@ -87,16 +87,15 @@ function love.keypressed( key )
 	if key == '3' then solShader:send('fcolorType',2) end
 	if key == '4' then solShader:send('fcolorType',3) end
 	if key == '5' then solShader:send('fcolorType',4) end
-	--if key == ' '	then sh.image = love.graphics.newImage(genTexture(0)) 	end
 	if key == 'escape'	then love.event.quit() 	end
 end
 
 function love.mousepressed(x,y, button)
-  if button == "wu" then
-    scale = scale + 0.1
-  elseif button == "wd" then
-    scale = scale - 0.1
-  end
-  if scale > 3 then scale = 3 end
-  if scale < 0.1 then scale = 0.1 end
+	if button == "wu" then
+		scale = scale + 0.1
+	elseif button == "wd" then
+		scale = scale - 0.1
+	end
+	if scale > 3 then scale = 3 end
+	if scale < 0.1 then scale = 0.1 end
 end
