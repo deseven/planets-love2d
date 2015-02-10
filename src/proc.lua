@@ -40,6 +40,14 @@ function createSol(type)
 	}
 end
 
+function createStar(type)
+	return {
+		type = type,
+		x = math.random(0,desktopW),
+		y = math.random(0,desktopH)
+	}
+end
+
 function createPlanet(index,type)
 	local curSize = math.random(100)+50
 	local curDist,curVel

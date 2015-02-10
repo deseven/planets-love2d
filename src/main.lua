@@ -1,5 +1,7 @@
 local numPlanets = 9
+local numStars = 0
 planets = {}
+stars = {}
 local sol
 
 require "proc"
@@ -9,10 +11,16 @@ function love.load()
 	love.window.setMode(desktopW,desktopH,{fullscreen=true,fullscreentype="desktop",vsync=true,fsaa=4,display=1})
 	love.window.setTitle("planets!!")
 	scale = 0.5
-	sol = createSol(0)
+
+	numStars = desktopW/5
+	for i = 0,numStars do
+		stars[i] = createStar(0)
+	end
 	for i = 0,numPlanets do
 		planets[i] = createPlanet(i,math.random(8))
 	end
+	sol = createSol(0)
+
 	planetShader = love.graphics.newShader("shaders/planet.glsl")
 	solShader = love.graphics.newShader("shaders/sol2.glsl")
 	solShader:send('fcolorType',math.random(0,4))
@@ -53,7 +61,10 @@ function love.draw()
 	--solShader:send('freq1',1)
 	--solShader:send('freq2',1)
 	love.graphics.draw(sol.texture,desktopW/2,desktopH/2,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)
-	--love.graphics.setShader()
+	love.graphics.setShader()
+	for i = 0,numStars do
+		love.graphics.point(stars[i].x,stars[i].y)
+	end
 	if shadersOn then love.graphics.setShader(planetShader) end
 	for i = 0,numPlanets do
 		planetShader:send('xrot',planets[i].xrot)
