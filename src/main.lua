@@ -5,6 +5,7 @@ stars = {}
 local sol
 local offsetX,offsetY = 0.0,0.0
 local mouseMoving,mouseX,mouseY = false,0,0
+local selectedObject,followedObject = -1,-1
 
 require "proc"
 
@@ -47,11 +48,12 @@ function love.load()
 end
 
 function love.update( dt )
-	if love.keyboard.isDown("left") then offsetX = offsetX + dt*500 end
-	if love.keyboard.isDown("right") then offsetX = offsetX - dt*500 end
-	if love.keyboard.isDown("down") then offsetY = offsetY - dt*500 end
-	if love.keyboard.isDown("up") then offsetY = offsetY + dt*500 end
+	if love.keyboard.isDown("left") then offsetX = offsetX + dt*500 selectedObject = -1 end
+	if love.keyboard.isDown("right") then offsetX = offsetX - dt*500 selectedObject = -1 end
+	if love.keyboard.isDown("down") then offsetY = offsetY - dt*500 selectedObject = -1 end
+	if love.keyboard.isDown("up") then offsetY = offsetY + dt*500 selectedObject = -1 end
 	if mouseMoving then
+		followedObject = -1
 		offsetX = offsetX + (mouseX - love.mouse.getX())*-1
 		offsetY = offsetY + (mouseY - love.mouse.getY())*-1
 		mouseX = love.mouse.getX()
@@ -72,6 +74,10 @@ function love.update( dt )
 		planets[i].y = y+desktopH/2
 		planets[i].xrot = planets[i].xrot + dt * planets[i].xrotspd
 		planets[i].yrot = planets[i].yrot + dt * planets[i].yrotspd
+	end
+	if followedObject >= 0 then
+		offsetX = (planets[followedObject].x-desktopW/2)*-1
+		offsetY = (planets[followedObject].y-desktopH/2)*-1
 	end
 	sol.cor = sol.cor + dt * sol.corspd
 	sol.rot = sol.rot + (dt * sol.rotspd)/10
@@ -94,14 +100,25 @@ function love.draw()
 	solShader:send('exttime',sol.cor)
 	solShader:send('rottime',sol.rot)
 	love.graphics.draw(sol.texture,desktopW/2+offsetX,desktopH/2+offsetY,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)
-	if shadersOn then love.graphics.setShader(planetShader) end
 	for i = 0,numPlanets do
+		if  i == selectedObject then
+			if shadersOn then love.graphics.setShader() end
+			love.graphics.circle("line",desktopW/2+offsetX,desktopH/2+offsetY,planets[i].distance*scale,200)
+		end
+		if shadersOn then love.graphics.setShader(planetShader) end
 		planetShader:send('xrot',planets[i].xrot)
 		planetShader:send('yrot',planets[i].yrot)
-		love.graphics.draw(planets[i].texture,planets[i].x+offsetX,planets[i].y+offsetY,0,scale,scale,planets[i].texture:getWidth()/2,planets[i].texture:getHeight()/2)
+		love.graphics.draw(planets[i].texture,planets[i].x+offsetX,planets[i].y+offsetY,0,scale/3,scale/3,planets[i].texture:getWidth()/2,planets[i].texture:getHeight()/2)
+		if  i == selectedObject then
+			if shadersOn then love.graphics.setShader() end
+			love.graphics.circle("line",planets[i].x+offsetX,planets[i].y+offsetY,planets[i].size/6*scale,100)
+		end
 	end
 	love.graphics.setShader()
-	local info = "FPS: "..tostring(love.timer.getFPS()).."\nRes: "..tostring(desktopW).."x"..tostring(desktopH).."\nScale: x"..tostring(round(scale,3))
+	local info = "FPS: "..tostring(love.timer.getFPS())
+	info = info.."\nRes: "..tostring(desktopW).."x"..tostring(desktopH)
+	info = info.."\nScale: x"..tostring(round(scale,3))
+	info = info.."\nSelected: "..tostring(selectedObject+1)
 	if debugOn then
 		info = info.."\n\nDebug:"
 		info = info.."\nShaders (s): "..tostring(shadersOn)
@@ -113,6 +130,22 @@ end
 
 function love.keypressed( key )
 	if key == 'd' then debugOn = not debugOn end
+	if key == '[' then
+		if selectedObject and selectedObject-1 >= 0 then
+			selectedObject = selectedObject-1
+		else
+			selectedObject = numPlanets
+		end
+		followedObject = selectedObject
+	end
+	if key == ']' then
+		if selectedObject and selectedObject+1 <= numPlanets then
+			selectedObject = selectedObject+1
+		else
+			selectedObject = 0
+		end
+		followedObject = selectedObject
+	end
 	if debugOn then
 		if key == 's' then shadersOn = not shadersOn end
 		if key == 'x' then subpixelStars = not subpixelStars end
@@ -122,7 +155,7 @@ function love.keypressed( key )
 		if key == '4' then solShader:send('fcolorType',3) sol.type = 3 end
 		if key == '5' then solShader:send('fcolorType',4) sol.type = 4 end
 	end
-	if key == 'escape'	then love.event.quit() 	end
+	if key == 'escape' then love.event.quit() end
 end
 
 function love.mousepressed(x,y,button)
@@ -147,6 +180,22 @@ function love.mousepressed(x,y,button)
 		mouseMoving = true
 		mouseX = love.mouse.getX()
 		mouseY = love.mouse.getY()
+	elseif button == "l" then
+		for i = 0,numPlanets do
+			if (x >= planets[i].x+offsetX-planets[i].size/6*scale) and (x <= planets[i].x+offsetX+planets[i].size/6*scale) then
+				if (y >= planets[i].y+offsetY-planets[i].size/6*scale) and (y <= planets[i].y+offsetY+planets[i].size/6*scale) then
+					if selectedObject == i then
+						followedObject = i
+					else
+						selectedObject = i
+					end
+					break
+				end
+			end
+			if i == numPlanets then
+				selectedObject = -1
+			end
+		end
 	end
 	if delta > 0 then
 		offsetX = offsetX*delta

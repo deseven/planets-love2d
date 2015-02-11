@@ -96,11 +96,14 @@ function createBG(w,h)
 end
 
 function createPlanet(index,type)
-	local curSize = math.random(100)+50
+	local curSize = math.random(300)+150
+	if curSize%2 >= 1 then
+		curSize = curSize + 1
+	end
 	local curDist,curVel
 	if index == 0 then
 			curDist = 540+math.random(20)+curSize
-			curVel = 0.005+math.random(6)/1000+math.random(10)/10000
+			curVel = 0.001+math.random(6)/1000+math.random(10)/10000
 		else
 			curDist = planets[index-1].distance+planets[index-1].size*math.random(2,3)+curSize+math.random(100)
 			curVel = planets[index-1].velocity/1.4
