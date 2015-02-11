@@ -101,7 +101,7 @@ function love.draw()
 		love.graphics.draw(planets[i].texture,planets[i].x+offsetX,planets[i].y+offsetY,0,scale,scale,planets[i].texture:getWidth()/2,planets[i].texture:getHeight()/2)
 	end
 	love.graphics.setShader()
-	local info = "FPS: "..tostring(love.timer.getFPS()).."\nRes: "..tostring(desktopW).."x"..tostring(desktopH).."\nScale: x"..tostring(scale)
+	local info = "FPS: "..tostring(love.timer.getFPS()).."\nRes: "..tostring(desktopW).."x"..tostring(desktopH).."\nScale: x"..tostring(round(scale,3))
 	if debugOn then
 		info = info.."\n\nDebug:"
 		info = info.."\nShaders (s): "..tostring(shadersOn)
@@ -127,13 +127,22 @@ end
 
 function love.mousepressed(x,y,button)
 	local delta = 0.0
-	scale = round(scale,1)
-	if button == "wu" and scale < 3.0 then
-		delta = (scale + 0.1) / scale
-		scale = scale + 0.1
-	elseif button == "wd" and scale > 0.1 then
-		delta = (scale - 0.1) / scale
-		scale = scale - 0.1
+	if button == "wu" then
+		if scale*1.1 <= 3.0 then
+			delta = (scale*1.1) / scale
+			scale = scale*1.1
+		else
+			delta = 3.0 / scale
+			scale = 3.0
+		end
+	elseif button == "wd" then
+		if scale*0.9 >= 0.1 then
+			delta = (scale*0.9) / scale
+			scale = scale*0.9
+		else
+			delta = 0.1 / scale
+			scale = 0.1
+		end
 	elseif button == "r" then
 		mouseMoving = true
 		mouseX = love.mouse.getX()
