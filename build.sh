@@ -21,6 +21,12 @@ case $1 in
 		;;
 esac
 
+if [ -f "distr/win-wrapper/planets.exe" ]; then
+	useWrapper="y"
+else
+	useWrapper="n"
+fi
+
 # cleaning up
 rm -rf build/*
 touch build/.gitkeep
@@ -59,8 +65,20 @@ if [ $buildWin32 = "y" ]; then
 		cat build/win32/love.exe build/planets.love > build/win32/planets.exe
 		rm build/win32/love.exe
 		cd build/win32
-		zip -9 -q -r ../planets-win32.zip .
-		cd ../../
+		if [ $useWrapper = "y" ]; then
+			zip -0 -q -r ../planets-win32.zip .
+			cd ..
+			printf "0: %.8x" `wc -c < planets-win32.zip` | sed -E 's/0: (..)(..)(..)(..)/0: \4\3\2\1/' | xxd -r -g0 > win32.bin
+			cat ../distr/win-wrapper/planets.exe planets-win32.zip win32.bin > planets.exe
+			rm -f win32.bin
+			rm -f planets-win32.zip
+			zip -9 -q planets-win32.zip planets.exe
+			rm -f planets.exe
+			cd ..
+		else
+			zip -9 -q -r ../planets-win32.zip .
+			cd ../../
+		fi
 		echo "done"
 	else
 		echo "skipping"
@@ -75,8 +93,20 @@ if [ $buildWin64 = "y" ]; then
 		cat build/win64/love.exe build/planets.love > build/win64/planets.exe
 		rm build/win64/love.exe
 		cd build/win64
-		zip -9 -q -r ../planets-win64.zip .
-		cd ../../
+		if [ $useWrapper = "y" ]; then
+			zip -0 -q -r ../planets-win64.zip .
+			cd ..
+			printf "0: %.8x" `wc -c < planets-win64.zip` | sed -E 's/0: (..)(..)(..)(..)/0: \4\3\2\1/' | xxd -r -g0 > win64.bin
+			cat ../distr/win-wrapper/planets.exe planets-win64.zip win64.bin > planets.exe
+			rm -f win64.bin
+			rm -f planets-win64.zip
+			zip -9 -q planets-win64.zip planets.exe
+			rm -f planets.exe
+			cd ..
+		else
+			zip -9 -q -r ../planets-win64.zip .
+			cd ../../
+		fi
 		echo "done"
 	else
 		echo "skipping"

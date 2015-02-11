@@ -111,7 +111,7 @@ function createPlanet(index,type)
 	return {
 		type = type,
 		name = "",
-		size = curSize,
+		size = curSize/3,
 		texture = genTexture(curSize,curSize,math.random(10),math.random(10),math.random(20)+10,math.random(20)+10,math.random(200)+55,math.random(200)+55,math.random(200)+55,math.random(2)),
 		x = 0,
 		y = 0,

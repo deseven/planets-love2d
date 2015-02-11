@@ -48,10 +48,10 @@ function love.load()
 end
 
 function love.update( dt )
-	if love.keyboard.isDown("left") then offsetX = offsetX + dt*500 selectedObject = -1 end
-	if love.keyboard.isDown("right") then offsetX = offsetX - dt*500 selectedObject = -1 end
-	if love.keyboard.isDown("down") then offsetY = offsetY - dt*500 selectedObject = -1 end
-	if love.keyboard.isDown("up") then offsetY = offsetY + dt*500 selectedObject = -1 end
+	if love.keyboard.isDown("left") then offsetX = offsetX + dt*500 followedObject = -1 end
+	if love.keyboard.isDown("right") then offsetX = offsetX - dt*500 followedObject = -1 end
+	if love.keyboard.isDown("down") then offsetY = offsetY - dt*500 followedObject = -1 end
+	if love.keyboard.isDown("up") then offsetY = offsetY + dt*500 followedObject = -1 end
 	if mouseMoving then
 		followedObject = -1
 		offsetX = offsetX + (mouseX - love.mouse.getX())*-1
@@ -111,7 +111,7 @@ function love.draw()
 		love.graphics.draw(planets[i].texture,planets[i].x+offsetX,planets[i].y+offsetY,0,scale/3,scale/3,planets[i].texture:getWidth()/2,planets[i].texture:getHeight()/2)
 		if  i == selectedObject then
 			if shadersOn then love.graphics.setShader() end
-			love.graphics.circle("line",planets[i].x+offsetX,planets[i].y+offsetY,planets[i].size/6*scale,100)
+			love.graphics.circle("line",planets[i].x+offsetX,planets[i].y+offsetY,planets[i].size/2*scale,100)
 		end
 	end
 	love.graphics.setShader()
@@ -182,8 +182,8 @@ function love.mousepressed(x,y,button)
 		mouseY = love.mouse.getY()
 	elseif button == "l" then
 		for i = 0,numPlanets do
-			if (x >= planets[i].x+offsetX-planets[i].size/6*scale) and (x <= planets[i].x+offsetX+planets[i].size/6*scale) then
-				if (y >= planets[i].y+offsetY-planets[i].size/6*scale) and (y <= planets[i].y+offsetY+planets[i].size/6*scale) then
+			if (x >= planets[i].x+offsetX-planets[i].size/2*scale) and (x <= planets[i].x+offsetX+planets[i].size/2*scale) then
+				if (y >= planets[i].y+offsetY-planets[i].size/2*scale) and (y <= planets[i].y+offsetY+planets[i].size/2*scale) then
 					if selectedObject == i then
 						followedObject = i
 					else
