@@ -1,4 +1,9 @@
 
+function round(num, idp)
+	local mult = 10^(idp or 0)
+	return math.floor(num * mult + 0.5) / mult
+end
+
 function multiplyColor(r,g,b,m)
 	local r = r*m
 	local g = g*m
@@ -67,10 +72,10 @@ function createSol(type)
 		name = "",
 		size = curSize,
 		texture = genTexture(curSize,curSize,5,5,10,20,0,0,0,3),
-		xrot = 0,
-		yrot = 0,
-		xrotspd = 0.8,
-		yrotspd = 0.3
+		cor = 0,
+		rot = 0,
+		corspd = 0.8,
+		rotspd = 0.3
 	}
 end
 

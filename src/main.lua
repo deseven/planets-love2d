@@ -3,6 +3,8 @@ local numStars = 0
 planets = {}
 stars = {}
 local sol
+local offsetX,offsetY = 0.0,0.0
+local mouseMoving,mouseX,mouseY = false,0,0
 
 require "proc"
 
@@ -32,17 +34,29 @@ function love.load()
 	end
 
 	updateLoading(3+numPlanets,loadPieces,"creating sol...")
-	sol = createSol(0)
+	sol = createSol(math.random(4))
 
 	updateLoading(loadPieces-1,loadPieces,"compiling shaders...")
 	planetShader = love.graphics.newShader("shaders/planet.glsl")
 	solShader = love.graphics.newShader("shaders/sol2.glsl")
-	solShader:send('fcolorType',math.random(4))
+	solShader:send('fcolorType',sol.type)
 	shadersOn = true
-	updateLoading(loadPieces,loadPieces,"launching simulation...")	
+	debugOn = false
+	subpixelStars = true
+	updateLoading(loadPieces,loadPieces,"launching simulation...")
 end
 
 function love.update( dt )
+	if love.keyboard.isDown("left") then offsetX = offsetX + dt*500 end
+	if love.keyboard.isDown("right") then offsetX = offsetX - dt*500 end
+	if love.keyboard.isDown("down") then offsetY = offsetY - dt*500 end
+	if love.keyboard.isDown("up") then offsetY = offsetY + dt*500 end
+	if mouseMoving then
+		offsetX = offsetX + (mouseX - love.mouse.getX())*-1
+		offsetY = offsetY + (mouseY - love.mouse.getY())*-1
+		mouseX = love.mouse.getX()
+		mouseY = love.mouse.getY()
+	end
 	for i = 0,numStars do
 		if math.random(1000) == 1000 then
 			stars[i].r,stars[i].g,stars[i].b = multiplyColor(stars[i].r,stars[i].g,stars[i].b,1.5)
@@ -59,47 +73,78 @@ function love.update( dt )
 		planets[i].xrot = planets[i].xrot + dt * planets[i].xrotspd
 		planets[i].yrot = planets[i].yrot + dt * planets[i].yrotspd
 	end
-	sol.xrot = sol.xrot + dt * sol.xrotspd
-	sol.yrot = sol.yrot + (dt * sol.yrotspd)/10
+	sol.cor = sol.cor + dt * sol.corspd
+	sol.rot = sol.rot + (dt * sol.rotspd)/10
 end
 
 function love.draw()
 	for i = 0,numStars do
 		love.graphics.setColor(stars[i].r,stars[i].g,stars[i].b)
-		love.graphics.point(stars[i].x,stars[i].y)
+		if subpixelStars then
+			love.graphics.setPointSize(1.5);
+			love.graphics.point(stars[i].x+0.25,stars[i].y+0.25)
+		else
+			love.graphics.setPointSize(1);
+			love.graphics.point(stars[i].x+0.5,stars[i].y+0.5)
+		end
 	end
 	love.graphics.setColor(255,255,255)
 	love.graphics.draw(bg,0,0,0,4,4)
 	if shadersOn then love.graphics.setShader(solShader) end
-	solShader:send('exttime',sol.xrot)
-	solShader:send('rottime',sol.yrot)
-	love.graphics.draw(sol.texture,desktopW/2,desktopH/2,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)
+	solShader:send('exttime',sol.cor)
+	solShader:send('rottime',sol.rot)
+	love.graphics.draw(sol.texture,desktopW/2+offsetX,desktopH/2+offsetY,0,scale,scale,sol.texture:getWidth()/2,sol.texture:getHeight()/2)
 	if shadersOn then love.graphics.setShader(planetShader) end
 	for i = 0,numPlanets do
 		planetShader:send('xrot',planets[i].xrot)
 		planetShader:send('yrot',planets[i].yrot)
-		love.graphics.draw(planets[i].texture,planets[i].x,planets[i].y,0,scale,scale,planets[i].texture:getWidth()/2,planets[i].texture:getHeight()/2)
+		love.graphics.draw(planets[i].texture,planets[i].x+offsetX,planets[i].y+offsetY,0,scale,scale,planets[i].texture:getWidth()/2,planets[i].texture:getHeight()/2)
 	end
 	love.graphics.setShader()
-	love.graphics.print("FPS: "..tostring(love.timer.getFPS()).."\nRes: "..tostring(desktopW).."x"..tostring(desktopH).."\nScale: x"..tostring(scale), 10, 10)
+	local info = "FPS: "..tostring(love.timer.getFPS()).."\nRes: "..tostring(desktopW).."x"..tostring(desktopH).."\nScale: x"..tostring(scale)
+	if debugOn then
+		info = info.."\n\nDebug:"
+		info = info.."\nShaders (s): "..tostring(shadersOn)
+		info = info.."\nSol type (1-5): "..tostring(sol.type+1)
+		info = info.."\nSubpixel stars (x): "..tostring(subpixelStars)
+	end
+	love.graphics.print(info,10,10)
 end
 
 function love.keypressed( key )
-	if key == 's' then shadersOn = not shadersOn end
-	if key == '1' then solShader:send('fcolorType',0) end
-	if key == '2' then solShader:send('fcolorType',1) end
-	if key == '3' then solShader:send('fcolorType',2) end
-	if key == '4' then solShader:send('fcolorType',3) end
-	if key == '5' then solShader:send('fcolorType',4) end
+	if key == 'd' then debugOn = not debugOn end
+	if debugOn then
+		if key == 's' then shadersOn = not shadersOn end
+		if key == 'x' then subpixelStars = not subpixelStars end
+		if key == '1' then solShader:send('fcolorType',0) sol.type = 0 end
+		if key == '2' then solShader:send('fcolorType',1) sol.type = 1 end
+		if key == '3' then solShader:send('fcolorType',2) sol.type = 2 end
+		if key == '4' then solShader:send('fcolorType',3) sol.type = 3 end
+		if key == '5' then solShader:send('fcolorType',4) sol.type = 4 end
+	end
 	if key == 'escape'	then love.event.quit() 	end
 end
 
-function love.mousepressed(x,y, button)
-	if button == "wu" then
+function love.mousepressed(x,y,button)
+	local delta = 0.0
+	scale = round(scale,1)
+	if button == "wu" and scale < 3.0 then
+		delta = (scale + 0.1) / scale
 		scale = scale + 0.1
-	elseif button == "wd" then
+	elseif button == "wd" and scale > 0.1 then
+		delta = (scale - 0.1) / scale
 		scale = scale - 0.1
+	elseif button == "r" then
+		mouseMoving = true
+		mouseX = love.mouse.getX()
+		mouseY = love.mouse.getY()
 	end
-	if scale > 3 then scale = 3 end
-	if scale < 0.1 then scale = 0.1 end
+	if delta > 0 then
+		offsetX = offsetX*delta
+		offsetY = offsetY*delta
+	end
+end
+
+function love.mousereleased(x,y,button)
+	if button == "r" then mouseMoving = false end
 end
