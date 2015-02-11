@@ -13,6 +13,7 @@ Tested on Windows XP/7 and OS X 10.9
 Use mouse wheel to zoom in/out.  
 Use left mouse button to select an object.  
 Click again to follow it.  
+Use right mouse button or arrows to move the viewpoint.  
 Use [ and ] to cycle through objects.  
 Use D to enter the debug mode.  
 Use ESC to quit.
