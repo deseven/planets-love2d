@@ -1,12 +1,21 @@
-## planets!! 
-This is a rewrite attempt for a [previous PB version](https://github.com/deseven/planets).  
-Not much to see here right now.
+## planets!
+![planets!](http://deseven.info/sys/planets.png)  
+Simple solar system simulator. Everything is procedurally generated, so it can be used as a screensaver (just change the binary extension to "scr").  
+No real planet physics as for now.
 
 ## Binaries
-Not yet.
+You can get the latest stable build [here](http://deseven.info/soft).
 
 ## Compatibility
 Tested on Windows XP/7 and OS X 10.9
+
+## Usage/Controls
+Use mouse wheel to zoom in/out.  
+Use left mouse button to select an object.  
+Click again to follow it.  
+Use [ and ] to cycle through objects.  
+Use D to enter the debug mode.  
+Use ESC to quit.
 
 ## Building
 Unpack the LÖVE distro (0.9.0 or higher) to the distr directory according to the desired arch and run the included `build.sh` like that:
