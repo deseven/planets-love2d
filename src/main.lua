@@ -2,7 +2,7 @@ local numPlanets = 9
 local numStars = 0
 planets = {}
 stars = {}
-local sol
+sol = {}
 local offsetX,offsetY = 0.0,0.0
 local mouseMoving,mouseX,mouseY = false,0,0
 local selectedObject,followedObject = -1,-1
@@ -28,14 +28,14 @@ function love.load()
 		stars[i] = createStar(0)
 	end
 
-	updateLoading(3,loadPieces,"creating planets...")
+	updateLoading(3,loadPieces,"creating sol...")
+	sol = createSol(math.random(4))
+
+	updateLoading(4,loadPieces,"creating planets...")
 	for i = 0,numPlanets do
 		planets[i] = createPlanet(i,math.random(8))
 		updateLoading(3+i,loadPieces,"creating planet "..tostring(i).."...")
 	end
-
-	updateLoading(3+numPlanets,loadPieces,"creating sol...")
-	sol = createSol(math.random(4))
 
 	updateLoading(loadPieces-1,loadPieces,"compiling shaders...")
 	planetShader = love.graphics.newShader("shaders/planet.glsl")
@@ -155,6 +155,7 @@ function love.keypressed( key )
 		if key == '4' then solShader:send('fcolorType',3) sol.type = 3 end
 		if key == '5' then solShader:send('fcolorType',4) sol.type = 4 end
 	end
+	if key == ' ' then resetGame() love.load() end
 	if key == 'escape' then love.event.quit() end
 end
 

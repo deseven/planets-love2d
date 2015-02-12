@@ -1,4 +1,13 @@
 
+function resetGame()
+	planets = {}
+	stars = {}
+	sol = {}
+	offsetX,offsetY = 0.0,0.0
+	mouseMoving,mouseX,mouseY = false,0,0
+	selectedObject,followedObject = -1,-1
+end
+
 function round(num, idp)
 	local mult = 10^(idp or 0)
 	return math.floor(num * mult + 0.5) / mult
@@ -66,7 +75,7 @@ function genTexture(w,h,a1,b1,a2,b2,r,g,b,ctype)
 end
 
 function createSol(type)
-	local curSize = 1500
+	local curSize = math.random(1000,2000)
 	return {
 		type = type,
 		name = "",
@@ -96,13 +105,13 @@ function createBG(w,h)
 end
 
 function createPlanet(index,type)
-	local curSize = math.random(100)+50
+	local curSize = math.random(100)+30
 	if curSize%2 >= 1 then
 		curSize = curSize + 1
 	end
 	local curDist,curVel
 	if index == 0 then
-			curDist = 540+math.random(20)+curSize
+			curDist = sol.size/2.5+math.random(20)+curSize
 			curVel = 0.001+math.random(6)/1000+math.random(10)/10000
 		else
 			curDist = planets[index-1].distance+planets[index-1].size*math.random(2,3)+curSize+math.random(100)
