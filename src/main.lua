@@ -108,10 +108,10 @@ function love.draw()
 		if shadersOn then love.graphics.setShader(planetShader) end
 		planetShader:send('xrot',planets[i].xrot)
 		planetShader:send('yrot',planets[i].yrot)
-		love.graphics.draw(planets[i].texture,planets[i].x+offsetX,planets[i].y+offsetY,0,scale/3,scale/3,planets[i].texture:getWidth()/2,planets[i].texture:getHeight()/2)
+		love.graphics.draw(planets[i].texture,planets[i].x+offsetX,planets[i].y+offsetY,0,scale,scale,planets[i].texture:getWidth()/2,planets[i].texture:getHeight()/2)
 		if  i == selectedObject then
 			if shadersOn then love.graphics.setShader() end
-			love.graphics.circle("line",planets[i].x+offsetX,planets[i].y+offsetY,planets[i].size/2*scale,100)
+			love.graphics.circle("line",planets[i].x+offsetX,planets[i].y+offsetY,planets[i].size/2*scale-1*scale,100)
 		end
 	end
 	love.graphics.setShader()

@@ -96,7 +96,7 @@ function createBG(w,h)
 end
 
 function createPlanet(index,type)
-	local curSize = math.random(300)+150
+	local curSize = math.random(100)+50
 	if curSize%2 >= 1 then
 		curSize = curSize + 1
 	end
@@ -111,7 +111,7 @@ function createPlanet(index,type)
 	return {
 		type = type,
 		name = "",
-		size = curSize/3,
+		size = curSize,
 		texture = genTexture(curSize,curSize,math.random(10),math.random(10),math.random(20)+10,math.random(20)+10,math.random(200)+55,math.random(200)+55,math.random(200)+55,math.random(2)),
 		x = 0,
 		y = 0,
