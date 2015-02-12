@@ -3,17 +3,21 @@ local numStars = 0
 planets = {}
 stars = {}
 sol = {}
-local offsetX,offsetY = 0.0,0.0
-local mouseMoving,mouseX,mouseY = false,0,0
-local selectedObject,followedObject = -1,-1
+offsetX,offsetY = 0.0,0.0
+mouseMoving,mouseX,mouseY = false,0,0
+selectedObject,followedObject = -1,-1
+fullscreen = true
+showHelp = false
 
 require "proc"
 
 function love.load()
 	math.randomseed(os.time())
-	desktopW,desktopH = love.window.getDesktopDimensions(1)
-	love.window.setMode(desktopW,desktopH,{fullscreen=true,fullscreentype="desktop",vsync=true,fsaa=4,display=1})
-	love.window.setTitle("planets!!")
+	if fullscreen then
+		desktopW,desktopH = love.window.getDesktopDimensions(1)
+		love.window.setMode(desktopW,desktopH,{fullscreen=true,fullscreentype="desktop",vsync=true,fsaa=4,display=1})
+		love.window.setTitle("planets!!")
+	end
 	mainFont = love.graphics.newFont("fonts/xol.ttf",16)
 	numStars = desktopW/5
 	scale = 0.5
@@ -115,17 +119,31 @@ function love.draw()
 		end
 	end
 	love.graphics.setShader()
-	local info = "FPS: "..tostring(love.timer.getFPS())
-	info = info.."\nRes: "..tostring(desktopW).."x"..tostring(desktopH)
-	info = info.."\nScale: x"..tostring(round(scale,3))
-	info = info.."\nSelected: "..tostring(selectedObject+1)
-	if debugOn then
-		info = info.."\n\nDebug:"
-		info = info.."\nShaders (s): "..tostring(shadersOn)
-		info = info.."\nSol type (1-5): "..tostring(sol.type+1)
-		info = info.."\nSubpixel stars (x): "..tostring(subpixelStars)
+	if showHelp then
+		local help = "Welcome to planets!"
+		help = help.."\n\nUse mouse wheel to zoom in/out."
+		help = help.."\nUse left mouse button to select an object."
+		help = help.."\nClick again to follow it."
+		help = help.."\nUse right mouse button or arrows to move the viewpoint. "
+		help = help.."\nUse [ and ] to cycle through objects."
+		help = help.."\nUse D to enter the debug mode."
+		help = help.."\nUse Space to restart simulation."
+		help = help.."\nUse F to toggle fullscreen."
+		help = help.."\nUse H to show help."
+		help = help.."\nUse Esc to quit."
+		love.graphics.print(help,10,10)
+	else
+		local info = "FPS: "..tostring(love.timer.getFPS())
+		info = info.."\nRes: "..tostring(desktopW).."x"..tostring(desktopH).."x"..tostring(round(scale,3))
+		info = info.."\nPress H for help"
+		if debugOn then
+			info = info.."\n\nDebug:"
+			info = info.."\nShaders (s): "..tostring(shadersOn)
+			info = info.."\nSol type (1-5): "..tostring(sol.type+1)
+			info = info.."\nSubpixel stars (x): "..tostring(subpixelStars)
+		end
+		love.graphics.print(info,10,10)
 	end
-	love.graphics.print(info,10,10)
 end
 
 function love.keypressed( key )
@@ -156,6 +174,8 @@ function love.keypressed( key )
 		if key == '5' then solShader:send('fcolorType',4) sol.type = 4 end
 	end
 	if key == ' ' then resetGame() love.load() end
+	if key == 'f' then toggleFullscreen() end
+	if key == 'h' then showHelp = not showHelp end
 	if key == 'escape' then love.event.quit() end
 end
 

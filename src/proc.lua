@@ -8,6 +8,19 @@ function resetGame()
 	selectedObject,followedObject = -1,-1
 end
 
+function toggleFullscreen()
+	fullscreen = not fullscreen
+	if fullscreen then
+		desktopW,desktopH = love.window.getDesktopDimensions(1)
+		love.window.setMode(desktopW,desktopH,{fullscreen=true,fullscreentype="desktop",vsync=true,fsaa=4,display=1})
+	else
+		desktopW,desktopH = 800,600
+		love.window.setMode(desktopW,desktopH,{fullscreen=false,vsync=true,fsaa=4,display=1})
+	end
+	resetGame()
+	love.load()
+end
+
 function round(num, idp)
 	local mult = 10^(idp or 0)
 	return math.floor(num * mult + 0.5) / mult

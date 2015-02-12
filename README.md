@@ -1,5 +1,5 @@
 ## planets!
-![planets!](http://deseven.info/sys/planets.png)  
+![planets!](http://deseven.info/sys/planets2.png)  
 Simple solar system simulator. Everything is procedurally generated, so it can be used as a screensaver (just change the binary extension to "scr").  
 No real planet physics as for now.
 
@@ -16,7 +16,10 @@ Click again to follow it.
 Use right mouse button or arrows to move the viewpoint.  
 Use [ and ] to cycle through objects.  
 Use D to enter the debug mode.  
-Use ESC to quit.
+Use F to toggle fullscreen.  
+Use H to show help.  
+Use Space to restart simulation.  
+Use Esc to quit.
 
 ## Building
 Unpack the LÖVE distro (0.9.0 or higher) to the distr directory according to the desired arch and run the included `build.sh` like that:
