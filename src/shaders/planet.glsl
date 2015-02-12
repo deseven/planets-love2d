@@ -15,5 +15,7 @@ vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pixel_coords) {
 	number y3 = mod(p2.y / pi2 + 0.5 + yrot, 1.0);
 	vec2 newCoord = vec2(x3, y3);						// location of texture on sphere
 	vec4 sphereColor = color * Texel(texture, newCoord);
+	sphereColor.a = smoothstep(0.49,0.5,distance(tc,vec2(0.5,0.5)));
+	sphereColor.a = 1. - sphereColor.a;
 	return sphereColor;
 }
